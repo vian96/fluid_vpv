@@ -17,10 +17,11 @@ def main():
     weights = np.array([4/9,1/9,1/36,1/9,1/36,1/9,1/36,1/9,1/36])
 
     F = np.ones((Ny, Nx, Nl)) + 0.1 * np.random.randn(Ny, Nx, Nl)
-    F[:,:,3] = 2.3
+    # F[:,:,3] = 2.3
 
     X, Y = np.meshgrid(range(Nx), range(Ny))
-    cyclinder = (X - Nx/2)**2 + (Y - Ny/2)**2 < 13**2
+    # (X - Nx/2)**2 + (Y - Ny/2)**2 < 13**2 # cylinder
+    obstacle =( abs((Y - Ny/2)**2 + 6*(X - Nx/2)) < (Ny/2)) & (abs(Y - Ny/2) > Ny/16) & (X > Nx/6)
     engine = (abs(X-Nx/4) < Nx/20) & (abs(Y - Ny/2) < Ny/8)
 
 
@@ -41,13 +42,13 @@ def main():
         ux  = np.clip(np.sum(F*cxs, 2) / rho, -0.4, 0.4)
         uy  = np.clip(np.sum(F*cys, 2) / rho, -0.4, 0.4)
 
-        bnry = F[cyclinder, :]
+        bnry = F[obstacle, :]
         bnry = bnry[:, [0,5,6,7,8,1,2,3,4]]
-        F[cyclinder, :] = bnry
-        ux[cyclinder] = 0
-        uy[cyclinder] = 0
+        F[obstacle, :] = bnry
+        ux[obstacle] = 0
+        uy[obstacle] = 0
 
-        ux[engine] = 0.25
+        ux[engine] = 0.13
 
         Feq = np.zeros(F.shape)
         for i, cx, cy, w in zip(range(Nl), cxs, cys, weights):
