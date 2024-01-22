@@ -11,8 +11,7 @@ def calc_mvn(ux, r, y0, x, n):
         - для силы (dp/dt = dm/dt*v) n=2
         - для мощности n=3 
     по формуле sum(2 pi r dr * v^n) """
-    return 2*np.pi*(np.sum(np.arange(r) * ux[y0:y0+r, x]**n) 
-                    + np.sum(np.arange(r) * ux[y0-r+1:y0+1, x]**n))
+    return (np.sum(ux[y0:y0+r, x]**n) + np.sum(ux[y0-r+1:y0+1, x]**n))
 
 def main():
     Nx = 400
