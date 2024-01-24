@@ -1,16 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-"""
-main logic of code taken from https://www.youtube.com/watch?v=JFWqCQHg-Hs
-"""
+"""main logic of code taken from https://www.youtube.com/watch?v=JFWqCQHg-Hs"""
 
 def calc_mvn(ux, r, y0, x, n):
-    """ суммирует v^n в круге x=x, |y0-y|<r 
-        - расход (масса в секунду) n=1
-        - для силы (dp/dt = dm/dt*v) n=2
-        - для мощности n=3 
-    по формуле sum(2 pi r dr * v^n) """
+    """ sums v^n over x=x, |y0-y|<r 
+        - discharge (mass per second) n=1
+        - force (dp/dt = dm/dt*v) n=2
+        - power n=3 """
     return (np.sum(ux[y0:y0+r, x]**n) + np.sum(ux[y0-r+1:y0+1, x]**n))
 
 def main():
@@ -26,7 +23,7 @@ def main():
     weights = np.array([4/9,1/9,1/36,1/9,1/36,1/9,1/36,1/9,1/36])
 
     F = np.ones((Ny, Nx, Nl)) + 0.1 * np.random.randn(Ny, Nx, Nl)
-    # F[:,:,3] = 2.3
+    # F[:,:,3] = 2.3 # for velocity to the right at t=0
 
     X, Y = np.meshgrid(range(Nx), range(Ny))
     # (X - Nx/2)**2 + (Y - Ny/2)**2 < 13**2 # cylinder
@@ -45,6 +42,7 @@ def main():
         F[:, -1, [6,7,8]] = F[:, -2, [6,7,8]]
         F[:,  0, [2,3,4]] = F[:,  1, [2,3,4]]
 
+        # streaming
         for i, cx, cy in zip(range(Nl), cxs, cys):
             F[:,:,i] = np.roll(F[:,:,i], cx, axis=1)
             F[:,:,i] = np.roll(F[:,:,i], cy, axis=0)
